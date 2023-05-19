@@ -248,26 +248,39 @@ class RcloneTransferHelper:
         result = await self.__start_upload(cmd, remote_type)
         if not result:
             return
+        
+        try:
+            genLink = config_dict['GENERATE_CLOUD_LINK']
+        except:
+            genLink = True
+        if genLink:
+                    if remote_type == 'drive':
+                        link, destination = await self.__get_gdrive_link(oconfig_path, oremote, rc_path, mime_type)
+                    else:
+                        if mime_type == 'Folder':
+                            destination = f"{oremote}:{rc_path}"
+                        elif rc_path:
+                            destination = f"{oremote}:{rc_path}/{self.name}"
+                        else:
+                            destination = f"{oremote}:{self.name}"
 
-        if remote_type == 'drive':
-            link, destination = await self.__get_gdrive_link(oconfig_path, oremote, rc_path, mime_type)
+                        cmd = ['rclone', 'link', '--config', oconfig_path, destination]
+                        res, err, code = await cmd_exec(cmd)
+
+                        if code == 0:
+                            link = res
+                        elif code != -9:
+                            LOGGER.error(
+                                f'while getting link. Path: {destination} | Stderr: {err}')
+                            link = ''
         else:
-            if mime_type == 'Folder':
-                destination = f"{oremote}:{rc_path}"
-            elif rc_path:
-                destination = f"{oremote}:{rc_path}/{self.name}"
-            else:
-                destination = f"{oremote}:{self.name}"
-
-            cmd = ['rclone', 'link', '--config', oconfig_path, destination]
-            res, err, code = await cmd_exec(cmd)
-
-            if code == 0:
-                link = res
-            elif code != -9:
-                LOGGER.error(
-                    f'while getting link. Path: {destination} | Stderr: {err}')
-                link = ''
+                        if mime_type == 'Folder':
+                            destination = f"{oremote}:{rc_path}"
+                        elif rc_path:
+                            destination = f"{oremote}:{rc_path}/{self.name}"
+                        else:
+                            destination = f"{oremote}:{self.name}"
+                        link = ''
         if self.__is_cancelled:
             return
         LOGGER.info(f'Upload Done. Path: {destination}')

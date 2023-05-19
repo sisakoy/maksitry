@@ -106,3 +106,4 @@ class Config:
         TORRENT_TIMEOUT = int(environ.get("TORRENT_TIMEOUT", "0"))
         UPTOBOX_TOKEN = environ.get("UPTOBOX_TOKEN", "")
         FLASK_SERVER = get_config('FLASK_SERVER', False)
+        GENERATE_CLOUD_LINK = True
