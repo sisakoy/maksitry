@@ -106,9 +106,13 @@ class RcloneTransferHelper:
 
         if return_code == 0:
             await self.__listener.onDownloadComplete()
+        if return_code == 1:
+            error = (await self.__proc.stdout.read()).decode().strip()
+            LOGGER.error(f"Some Error Occured But Trying To Upload: {error}")
+            await self.__listener.onDownloadComplete()
         elif return_code != -9:
             error = (await self.__proc.stderr.read()).decode().strip()
-            LOGGER.error(error)
+            LOGGER.error(f"Error [{return_code}] : {error}")
 
             if remote_type == 'drive' and 'RATE_LIMIT_EXCEEDED' in error and config_dict['USE_SERVICE_ACCOUNTS']:
                 if self.__sa_number != 0 and self.__sa_count < self.__sa_number:
