@@ -40,13 +40,12 @@ ytdlleech - Leech through yt-dlp supported link
 ytdlzipleech - Leech yt-dlp support link as zip
 usetting - User settings
 status - Get Mirror Status message
-stats - Bot Stats
 time - Bot Uptime
 cancel - Cancel a task
 cancelall - Cancel all tasks
 log - Get the Bot Log
 restart - Restart the Bot
-stats - Bot Usage Stats
+stats - Bot Stats
 ```
 
 <hr>
