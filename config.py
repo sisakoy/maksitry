@@ -28,6 +28,9 @@ def get_config(variable, value):
                 elif variable=='FLASK_SERVER':
                         FLASK_SERVER = environ.get("FLASK_SERVER","")
                         return True if FLASK_SERVER.lower() == 'true' else False
+                elif variable=='GENERATE_CLOUD_LINK':
+                        GENERATE_CLOUD_LINK = environ.get("GENERATE_CLOUD_LINK","True")
+                        return True if GENERATE_CLOUD_LINK.lower() == 'true' else False
                 elif variable=='PORT':
                         return int(environ.get("PORT","8080"))
         
@@ -103,4 +106,4 @@ class Config:
         TORRENT_TIMEOUT = int(environ.get("TORRENT_TIMEOUT", "0"))
         UPTOBOX_TOKEN = environ.get("UPTOBOX_TOKEN", "")
         FLASK_SERVER = get_config('FLASK_SERVER', False)
-        GENERATE_CLOUD_LINK = True
+        GENERATE_CLOUD_LINK = get_config('GENERATE_CLOUD_LINK', True)
