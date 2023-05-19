@@ -10,9 +10,6 @@ def get_config(variable, value):
                         return environ.get("ALLOWED_CHATS","").split()
                 elif variable=='SUDO_USERS':
                         return environ.get("SUDO_USERS","").split()
-                elif variable=='DOWNLOAD_DIR':
-                        DOWNLOAD_DIR = environ.get("DOWNLOAD_DIR","/content/BaseBot/downloads/")
-                        return DOWNLOAD_DIR if DOWNLOAD_DIR.endswith("/") else f'{DOWNLOAD_DIR}/'
                 elif variable=='AS_DOCUMENT':
                         AS_DOCUMENT = environ.get("AS_DOCUMENT","")
                         return True if AS_DOCUMENT.lower() == 'true' else False
