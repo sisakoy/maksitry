@@ -7,7 +7,7 @@ from asyncio import sleep
 from aiofiles.os import path as aiopath
 
 from bot import bot, LOGGER, config_dict
-from bot.helper.ML.other.utils import is_url, is_magnet, is_mega_link, is_gdrive_link, get_content_type, new_task, sync_to_async, is_telegram_link
+from bot.helper.ML.other.utils import is_url, is_magnet, is_mega_link, is_gdrive_link, get_content_type, new_task, sync_to_async, is_telegram_link, is_rclone_path
 from bot.helper.ML.other.exceptions import DirectDownloadLinkException
 from bot.helper.ML.aria2.aria2_engine import add_aria2c_download, start_aria2_listener
 from bot.helper.ML.other.direct_link_generator import direct_link_generator
@@ -17,6 +17,7 @@ from bot.helper.ML.telegram.filters import CustomFilters
 from bot.helper.ML.message.message_utils import sendMessage, get_tg_link_content
 from bot.helper.ML.task.process_listener import ProcessListener
 from bot.helper.ML.message.text import ML_HELP
+from bot.helper.ML.rclone.rclone_download import RcloneList,  add_rclone_download
 
 start_aria2_listener()
 
@@ -161,14 +162,15 @@ async def _m_l(client, message, isZip=False, extract=False, isLeech=False, sameD
                 link = await reply_to.download()
                 file_ = None
 
-    if not is_url(link) and not is_magnet(link) and not await aiopath.exists(link) and file_ is None:
+    if not is_url(link) and not is_magnet(link) and not await aiopath.exists(link) and not is_rclone_path(link) and file_ is None:
         await sendMessage(message, ML_HELP)
         return
 
     if link:
         LOGGER.info(link)
 
-    if not is_mega_link(link) and not is_magnet(link) and not is_gdrive_link(link) and not link.endswith('.torrent') and file_ is None:
+    if not is_mega_link(link) and not is_magnet(link) and not is_rclone_path(link) \
+       and not is_gdrive_link(link) and not link.endswith('.torrent') and file_ is None:
         content_type = await sync_to_async(get_content_type, link)
         if content_type is None or re_match(r'text/html|text/plain', content_type):
             try:
@@ -183,15 +185,28 @@ async def _m_l(client, message, isZip=False, extract=False, isLeech=False, sameD
     if not isLeech:
         if up is None or up == 'rc':
             up = config_dict['RCLONE_PATH']
-        if not up:
+        elif not up:
             await sendMessage(message, 'No Rclone Destination!')
             return
-        if up.startswith('mrcc:'):
-            config_path = f'rclone/{message.from_user.id}.conf'
-        else:
-            config_path = 'rclone.conf'
-        if not await aiopath.exists(config_path):
-            await sendMessage(message, f"Rclone Config: {config_path} not Exists!")
+        elif up not in ['rcl']:
+            if up.startswith('mrcc:'):
+                config_path = f'rclone/{message.from_user.id}.conf'
+            else:
+                config_path = 'rclone.conf'
+            if not await aiopath.exists(config_path):
+                await sendMessage(message, f"Rclone Config: {config_path} not Exists!")
+                return
+
+    if link == 'rcl':
+        link = await RcloneList(client, message).get_rclone_path('rcd')
+        if not is_rclone_path(link):
+            await sendMessage(message, link)
+            return
+
+    if up == 'rcl' and not isLeech:
+        up = await RcloneList(client, message).get_rclone_path('rcu')
+        if not is_rclone_path(up):
+            await sendMessage(message, up)
             return
 
     listener = ProcessListener(
@@ -199,6 +214,16 @@ async def _m_l(client, message, isZip=False, extract=False, isLeech=False, sameD
 
     if file_ is not None:
         await TelegramDownloader(listener).add_download(reply_to, f'{path}/', name, session)
+    elif is_rclone_path(link):
+        if link.startswith('mrcc:'):
+            link = link.split('mrcc:', 1)[1]
+            config_path = f'rclone/{message.from_user.id}.conf'
+        else:
+            config_path = 'rclone.conf'
+        if not await aiopath.exists(config_path):
+            await sendMessage(message, f"Rclone Config: {config_path} not Exists!")
+            return
+        await add_rclone_download(link, config_path, f'{path}/', name, listener)
     else:
         if len(mesg) > 1 and not mesg[1].startswith('Tag:'):
             ussr = mesg[1]

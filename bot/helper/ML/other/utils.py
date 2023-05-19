@@ -194,6 +194,8 @@ def is_magnet(url):
 def is_url(url):
     return bool(re_match(URL_REGEX, url))
 
+def is_rclone_path(path):
+    return bool(re_match(r'^(mrcc:)?(?!magnet:)(?![- ])[a-zA-Z0-9_\. -]+(?<! ):(?!.*\/\/).*$|^rcl$', path))
 
 def is_gdrive_link(url):
     return "drive.google.com" in url
