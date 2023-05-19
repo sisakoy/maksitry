@@ -12,7 +12,8 @@ from .helper.other.commands import Commands
 from .helper.ML.message.message_utils import sendMessage, sendFile
 from .helper.ML.message.button_build import ButtonMaker
 from .helper.other.other_utils import bot_uptime, get_logs_msg, get_host_stats
-from .helper.ML.other.files_utils import start_cleanup, exit_clean_up
+from .helper.ML.other.files_utils import start_cleanup, exit_clean_up, clean_all
+from .helper.ML.other.utils import sync_to_async
 from bot.helper.other import reset_config
 from bot.helper.ML import cancel, ml_handler, task_status, user_settings, yt_handler, authorize
 
@@ -20,6 +21,8 @@ from bot.helper.ML import cancel, ml_handler, task_status, user_settings, yt_han
 
 async def restart(_, message):
     restart_msg= await sendMessage(message, "Restarting...") 
+    await sync_to_async(clean_all)
+    await (await create_subprocess_exec("pkill", "-9", "-f", "aria2c|rclone|ffmpeg")).wait()
     await (await create_subprocess_exec("python3", "update.py")).wait()
     with open(".restartmsg", "w") as f:
         f.truncate(0)
