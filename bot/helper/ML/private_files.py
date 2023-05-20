@@ -2,15 +2,15 @@
 from pyrogram.handlers import MessageHandler, CallbackQueryHandler
 from pyrogram.filters import command, regex, create
 from functools import partial
-from asyncio import create_subprocess_exec, create_subprocess_shell, sleep
+from asyncio import create_subprocess_exec, sleep
 from aiofiles.os import remove, rename, path as aiopath
 from aiofiles import open as aiopen
-from os import environ, getcwd
+from os import getcwd
 from time import time
 from aioshutil import rmtree as aiormtree
 
 from bot import config_dict, db, DRIVES_IDS, DRIVES_NAMES, INDEX_URLS, bot
-from bot.helper.ML.message.message_utils import sendMessage, sendFile, editMessage, update_all_messages
+from bot.helper.ML.message.message_utils import sendMessage, editMessage
 from bot.helper.ML.telegram.filters import CustomFilters
 from bot.helper.other.commands import Commands
 from bot.helper.ML.message.button_build import ButtonMaker
@@ -28,19 +28,6 @@ async def get_buttons(key=None, edit_type=None):
         buttons.ibutton('Private Files', "botset private")
         buttons.ibutton('Close', "botset close")
         msg = 'Bot Settings:'
-    elif key == 'var':
-        for k in list(config_dict.keys())[START:10+START]:
-            buttons.ibutton(k, f"botset editvar {k}")
-        if STATE == 'view':
-            buttons.ibutton('Edit', "botset edit var")
-        else:
-            buttons.ibutton('View', "botset view var")
-        buttons.ibutton('Back', "botset back")
-        buttons.ibutton('Close', "botset close")
-        for x in range(0, len(config_dict)-1, 10):
-            buttons.ibutton(
-                f'{int(x/10)}', f"botset start var {x}", position='footer')
-        msg = f'Config Variables | Page: {int(START/10)} | State: {STATE}'
     elif key == 'private':
         buttons.ibutton('Back', "botset back")
         buttons.ibutton('Close', "botset close")
@@ -161,19 +148,6 @@ async def edit_bot_settings(client, query):
         pfunc = partial(update_private_file, pre_message=message)
         rfunc = partial(update_buttons, message)
         await event_handler(client, query, pfunc, rfunc, True)
-    elif data[1] == 'edit':
-        await query.answer()
-        globals()['STATE'] = 'edit'
-        await update_buttons(message, data[2])
-    elif data[1] == 'view':
-        await query.answer()
-        globals()['STATE'] = 'view'
-        await update_buttons(message, data[2])
-    elif data[1] == 'start':
-        await query.answer()
-        if START != int(data[3]):
-            globals()['START'] = int(data[3])
-            await update_buttons(message, data[2])
 
 
 async def bot_settings(_, message):
@@ -183,6 +157,6 @@ async def bot_settings(_, message):
 
 
 bot.add_handler(MessageHandler(bot_settings, filters=command(
-    Commands.BotSetCommand) & CustomFilters.sudo))
+    Commands.BotPriveteFiles) & CustomFilters.sudo))
 bot.add_handler(CallbackQueryHandler(edit_bot_settings,
                 filters=regex("^botset") & CustomFilters.sudo))

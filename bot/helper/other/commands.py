@@ -27,4 +27,4 @@ class Commands:
         YtdlCommand = 'ytdl'
         YtdlZipCommand = 'ytdlzip'
         ResetConfig = 'resetconfig'
-        BotSetCommand = 'botsettings'
+        BotPriveteFiles = 'privatefiles'
