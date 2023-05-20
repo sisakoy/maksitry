@@ -39,12 +39,18 @@ ytdlzip - Mirror yt-dlp supported link as zip
 ytdlleech - Leech through yt-dlp supported link
 ytdlzipleech - Leech yt-dlp support link as zip
 usetting - User settings
+privatefiles - Upload private files
 status - Get Mirror Status message
 time - Bot Uptime
 cancel - Cancel a task
 cancelall - Cancel all tasks
+auth - Authorize user
+unauth - Unauthorize user
+addsudo - Add sudo user
+rmsudo - Remove sudo user
 log - Get the Bot Log
 restart - Restart the Bot
+resetconfig - Reset Config
 stats - Bot Stats
 ```
 

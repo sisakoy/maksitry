@@ -11,7 +11,6 @@ class Commands:
         UnAuthorize = 'unauth'
         AddSudo = 'addsudo'
         RemoveSudo = 'rmsudo'
-        ChangeConfig = 'changeconfigs'
         LC = 'leech'
         ZipLC = 'zipleech'
         CancelCommand = 'cancel'
