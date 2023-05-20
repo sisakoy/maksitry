@@ -6,29 +6,19 @@ from asyncio import create_subprocess_exec, create_subprocess_shell, sleep
 from aiofiles.os import remove, rename, path as aiopath
 from aiofiles import open as aiopen
 from os import environ, getcwd
-from dotenv import load_dotenv
 from time import time
-from io import BytesIO
 from aioshutil import rmtree as aiormtree
 
-from bot import config_dict, db, user_data, DATABASE_URL, MAX_SPLIT_SIZE, DRIVES_IDS, DRIVES_NAMES, INDEX_URLS, aria2, GLOBAL_EXTENSION_FILTER, status_reply_dict_lock, Interval, aria2_options, aria2c_global, IS_PREMIUM_USER, download_dict, qbit_options, get_client, LOGGER, bot
+from bot import config_dict, db, DRIVES_IDS, DRIVES_NAMES, INDEX_URLS, bot
 from bot.helper.ML.message.message_utils import sendMessage, sendFile, editMessage, update_all_messages
 from bot.helper.ML.telegram.filters import CustomFilters
 from bot.helper.other.commands import Commands
 from bot.helper.ML.message.button_build import ButtonMaker
-from bot.helper.ML.other.utils import setInterval, sync_to_async, new_thread
-from bot.helper.ML.task.task_manager import start_from_queued
+from bot.helper.ML.other.utils import new_thread
 
 START = 0
 STATE = 'view'
 handler_dict = {}
-default_values = {'AUTO_DELETE_MESSAGE_DURATION': 30,
-                  'DOWNLOAD_DIR': '/usr/src/app/downloads/',
-                  'LEECH_SPLIT_SIZE': MAX_SPLIT_SIZE,
-                  'RSS_DELAY': 900,
-                  'STATUS_UPDATE_INTERVAL': 10,
-                  'SEARCH_LIMIT': 0,
-                  'UPSTREAM_BRANCH': 'master'}
 
 
 
