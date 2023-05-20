@@ -27,7 +27,7 @@ async def get_buttons(key=None, edit_type=None):
     if key is None:
         buttons.ibutton('Private Files', "botset private")
         buttons.ibutton('Close', "botset close")
-        msg = 'Bot Settings:'
+        msg = 'Settings:'
     elif key == 'private':
         buttons.ibutton('Back', "botset back")
         buttons.ibutton('Close', "botset close")
