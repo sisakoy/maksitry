@@ -17,7 +17,6 @@ from bot.helper.ML.message.button_build import ButtonMaker
 from bot.helper.ML.other.utils import new_thread
 
 START = 0
-STATE = 'view'
 handler_dict = {}
 
 
