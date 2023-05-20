@@ -103,10 +103,6 @@ async def __onDownloadComplete(api, gid):
     if download.followed_by_ids:
         new_gid = download.followed_by_ids[0]
         LOGGER.info(f'Gid changed from {gid} to {new_gid}')
-        if dl := await getDownloadByGid(new_gid):
-            listener = dl.listener()
-            await listener.onDownloadComplete()
-            await sync_to_async(api.remove, [download], force=True, files=True)
     elif download.is_torrent:
         if dl := await getDownloadByGid(gid):
             if hasattr(dl, 'listener') and dl.seeding:
