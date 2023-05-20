@@ -1,4 +1,4 @@
-from bot import bot, botloop, LOGGER, log_file, botloop, FLASK_SERVER
+from bot import bot, botloop, LOGGER, log_file, botloop
 from signal import signal, SIGINT
 from sys import argv, executable, exit as sysexit
 from os import execl, remove
