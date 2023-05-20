@@ -2,6 +2,7 @@ from config import Config, LOGGER, user_data, bot_id, config_dict
 from motor.motor_asyncio import AsyncIOMotorClient
 from aiofiles import open as aiopen
 from aiofiles.os import path as aiopath, makedirs
+from dotenv import dotenv_values
 
 
 class Database:
@@ -45,12 +46,27 @@ class Database:
     async def update_user_doc(self, user_id, key, path=''):
         if self.error:
             return
-        if path:
+        if await aiopath.exists(path):
             async with aiopen(path, 'rb+') as doc:
                 doc_bin = await doc.read()
         else:
             doc_bin = ''
         await self.db.user_data.update_one({'_id': user_id}, {'$set': {key: doc_bin}}, upsert=True)
+        if self.close:
+            self._client.close()
+    
+    async def update_private_file(self, path):
+        if self.error:
+            return
+        if await aiopath.exists(path):
+            async with aiopen(path, 'rb+') as pf:
+                pf_bin = await pf.read()
+        else:
+            pf_bin = ''
+        path = path.replace('.', '__')
+        await self.db.files.update_one({'_id': bot_id}, {'$set': {path: pf_bin}}, upsert=True)
+        if path == 'config.env':
+            await self.update_deploy_config()
         if self.close:
             self._client.close()
     
@@ -89,6 +105,13 @@ class Database:
         if self.error:
             return
         await self.db.config.update_one({'_id': bot_id}, {'$set': dict_}, upsert=True)
+        if self.close:
+            self._client.close()
+    
+    async def update_deploy_config(self):
+        if self.error:
+            return
+        await self.db.deployConfig.replace_one({'_id': bot_id}, dict(dotenv_values('config.env')), upsert=True)
         if self.close:
             self._client.close()
     
