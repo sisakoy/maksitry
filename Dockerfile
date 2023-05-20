@@ -2,7 +2,7 @@ FROM python:3.9
 
 
 ENV DEBIAN_FRONTEND=noninteractive
-RUN apt -qq update && apt -qq install -y ffmpeg wget unzip p7zip-full p7zip-rar curl busybox aria2
+RUN apt -qq update && apt -qq install -y ffmpeg wget unzip p7zip-full curl busybox aria2
 
 COPY . /app
 WORKDIR /app
