@@ -1,4 +1,4 @@
-from config import Config, LOGGER, log_file, user_data, config_dict, PORT
+from config import Config, LOGGER, log_file, user_data, config_dict
 from pyrogram import Client
 from asyncio import get_event_loop
 from time import time
@@ -64,8 +64,6 @@ if config_dict['SUDO_USERS']:
         else:
                 user_data[int(id_.strip())]['is_sudo'] = True
 
-
-FLASK_SERVER = config_dict['FLASK_SERVER']
 
 if len(config_dict['RCLONE_CONFIG_URL']) and str(config_dict['RCLONE_CONFIG_URL']).startswith('http'):
     LOGGER.info(f"Downloading Rclone Config File: {config_dict['RCLONE_CONFIG_URL']}")

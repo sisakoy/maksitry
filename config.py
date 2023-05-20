@@ -25,14 +25,9 @@ def get_config(variable, value):
                 elif variable=='DUMP_CHAT_ID':
                         DUMP_CHAT_ID = environ.get("DUMP_CHAT_ID","")
                         return int(DUMP_CHAT_ID) if len(DUMP_CHAT_ID) else 0
-                elif variable=='FLASK_SERVER':
-                        FLASK_SERVER = environ.get("FLASK_SERVER","")
-                        return True if FLASK_SERVER.lower() == 'true' else False
                 elif variable=='GENERATE_CLOUD_LINK':
                         GENERATE_CLOUD_LINK = environ.get("GENERATE_CLOUD_LINK","True")
                         return True if GENERATE_CLOUD_LINK.lower() == 'true' else False
-                elif variable=='PORT':
-                        return int(environ.get("PORT","8080"))
         
         except Exception as e:
                 LOGGER.error(f'Error Getting Variable {variable}:  {str(e)}')
@@ -52,7 +47,6 @@ if len(environ.get("Telegram_BOT_TOKEN","")) == 0:
         exit(1)
         
 bot_id = environ.get("Telegram_BOT_TOKEN","").split(':', 1)[0]
-PORT = get_config('PORT', 8080)
 
 
 
@@ -105,5 +99,4 @@ class Config:
         YT_DLP_OPTIONS = environ.get("YT_DLP_OPTIONS", "")
         TORRENT_TIMEOUT = int(environ.get("TORRENT_TIMEOUT", "0"))
         UPTOBOX_TOKEN = environ.get("UPTOBOX_TOKEN", "")
-        FLASK_SERVER = get_config('FLASK_SERVER', False)
         GENERATE_CLOUD_LINK = get_config('GENERATE_CLOUD_LINK', True)

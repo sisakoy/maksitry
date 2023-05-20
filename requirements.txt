@@ -18,4 +18,5 @@ git+https://github.com/zevtyardt/lk21.git
 lxml==4.9.2
 Pillow==9.5.0
 tenacity==8.2.2
-flask==2.1.3
+flask
+gunicorn

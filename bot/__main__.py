@@ -76,10 +76,5 @@ bot.start()
 
 botloop.run_until_complete(main(bot.get_me().username))
 
-if FLASK_SERVER:
-    LOGGER.info('Starting Flask Server')
-    from .helper.other.flask_server import run_flask
-    run_flask()
-
 botloop.run_forever()
 
