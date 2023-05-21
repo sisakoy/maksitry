@@ -87,7 +87,9 @@ class Database:
                     await makedirs('rclone')
                 async with aiopen(rclone_path, 'wb+') as f:
                     await f.write(row['rclone'])
-            user_data.update(row)
+            uid = row['_id']
+            del row['_id']
+            user_data[uid] = row
             del row
         await rows.close()
         if self.close:
