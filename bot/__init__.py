@@ -73,7 +73,7 @@ if not exists('rclone.conf'):
     LOGGER.warning("Rclone Config File Not Found")
 
 bot = Client(
-    "Nik66Bot",
+    "Nikkuui",
     api_id=config_dict['Telegram_API_ID'],
     api_hash=config_dict['Telegram_API_HASH'],
     bot_token=config_dict['Telegram_BOT_TOKEN'],
