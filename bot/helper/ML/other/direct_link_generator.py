@@ -8,6 +8,7 @@ from https://github.com/AvinashReddy3108/PaperplaneExtended . I hereby take no c
 than the modifications. See https://github.com/AvinashReddy3108/PaperplaneExtended/commits/master/userbot/modules/direct_links.py
 for original authorship. """
 
+from base64 import b64decode
 from http.cookiejar import MozillaCookieJar
 from json import loads
 from os import path
@@ -20,6 +21,9 @@ from bs4 import BeautifulSoup
 from cloudscraper import create_scraper
 from lk21 import Bypass
 from lxml import etree
+from requests import session
+
+import requests
 
 from bot import config_dict
 from bot.helper.ML.other.utils import get_readable_time, is_share_link
@@ -523,16 +527,28 @@ def terabox(url) -> str:
             if fstring and fstring.startswith('try {eval(decodeURIComponent'):
                 jsToken = fstring.split('%22')[1]
         headers = {"Cookie": cookie_string}
-        res = session.request('GET', f'https://www.terabox.com/share/list?app_id=250528&jsToken={jsToken}&shorturl={key}&root=1', headers=headers)
+        res = session.request(
+            'GET', f'https://www.terabox.com/share/list?app_id=250528&jsToken={jsToken}&shorturl={key}&root=1', headers=headers)
         result = res.json()
-    except Exception as e: raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}")
+    except Exception as e:
+        raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}")
     if result['errno'] != 0: raise DirectDownloadLinkException(f"ERROR: '{result['errmsg']}' Check cookies")
     result = result['list']
-    if len(result) > 1: raise DirectDownloadLinkException("ERROR: Can't download mutiple files")
+    if len(result) > 1:
+        raise DirectDownloadLinkException(
+            "ERROR: Can't download mutiple files")
     result = result[0]
-    if result['isdir'] != '0': raise DirectDownloadLinkException("ERROR: Can't download folder")
-    return result['dlink']
+    
+    if result['isdir'] != '0':
+        raise DirectDownloadLinkException("ERROR: Can't download folder")
+    
+    try:
+        dlink = result['dlink']
+    except Exception as e:
+        raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}, Check cookies")
 
+    return dlink
+  
 
 def filepress(url):
     cget = create_scraper().request
@@ -718,3 +734,12 @@ def linkbox(url):
     name = quote(itemInfo["name"])
     raw = itemInfo['url'].split("/", 3)[-1]
     return f'https://wdl.nuplink.net/{raw}&filename={name}'
+
+
+def route_intercept(route, request):
+    if request.resource_type == 'script':
+        route.abort()
+    else:
+        route.continue_()
+
+
