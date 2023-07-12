@@ -509,10 +509,10 @@ def terabox(url) -> str:
         raise DirectDownloadLinkException("ERROR: terabox.txt not found")
     session = create_scraper()
     try:
-        key = url.split('?surl=')[-1]
-        url = f'http://www.terabox.com/wap/share/filelist?surl={key}'
         jar = MozillaCookieJar('terabox.txt')
         jar.load()
+        cookie_string = ''
+        for cookie in jar: cookie_string += f'{cookie.name}={cookie.value}; '
         session.cookies.update(jar)
         res = session.request('GET', url)
         key = res.url.split('?surl=')[-1]
@@ -522,8 +522,9 @@ def terabox(url) -> str:
             fstring = fs.string
             if fstring and fstring.startswith('try {eval(decodeURIComponent'):
                 jsToken = fstring.split('%22')[1]
+        headers = {"Cookie": cookie_string}
         res = session.request(
-            'GET', f'https://www.terabox.com/share/list?app_id=250528&jsToken={jsToken}&shorturl={key}&root=1')
+            'GET', f'https://www.terabox.com/share/list?app_id=250528&jsToken={jsToken}&shorturl={key}&root=1', headers=headers)
         result = res.json()
     except Exception as e:
         raise DirectDownloadLinkException(f"ERROR: {e.__class__.__name__}")
